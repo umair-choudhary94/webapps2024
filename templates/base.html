@@ -1,17 +1,78 @@
-<!doctype html>
+<!DOCTYPE html>
+{% load static %}
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=0"
+    />
+    <title>Payapp</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+   
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+      .nav-item {
+        margin-right: 20px;
+        
+      }
+      
+    </style>
   </head>
-  <body>
-    <div class="container">
-        {% block content %}{% endblock content %}
-    </div>     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+  <body style="background-color: rgb(240, 240, 240);">
+    <div style='background-color: rgb(230, 15, 26);' class='py-2'>
+
+      <nav class="container navbar navbar-expand-lg  text-white px-4">
+        <a class="navbar-brand text-white " href="/" style="font-weight:bold;">Payapp</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse " id="navbarNavDropdown">
+          <ul class="navbar-nav text-white">
+            <li class="nav-item active ">
+              <a class="nav-link text-white" href="/">Home <span class="sr-only"></span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="/request_money">Request Money</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="/send_money">Send Money</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="#">Activity</a>
+            </li>
+            
+          </ul>
+         
+        </div>
+        <div class='d-flex flex-row '>
+          <i class="fa-solid fa-bell text-white px-4 py-1" style="font-size:18px;"></i>
+          {% if user.is_authenticated %}
+    <a href="/auth/logout/" class='text-white decoration-none' style="text-decoration:none;">
+        Logout
+    </a>
+    {% else %}
+    <a href="/auth/login/" class='text-white decoration-none' style="text-decoration:none;">
+      Login
+  </a>
+{% endif %}
+
+        </div>
+      </nav>
+    </div>
+
+ 
+        <div class="" style="">
+            {% block content %}{% endblock content %}
+        
+        </div>
+        
+        
+
+    
+
+
+        <script src="https://kit.fontawesome.com/9782267aad.js" crossorigin="anonymous"></script>
+
   </body>
 </html>

@@ -1,4 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
+<div class=" mx-auto" style="width:400px;height: 100vh;padding-top:100px;">
+    <div class="card p-4">
+        <div class="text-center">
+            <h1>Login</h1>
+        </div>
+        <form class="mt-3" action="/auth/login/" method="post">{% csrf_token %}
+            <!-- Email input -->
+            <div class="form-outline mb-4">
+                <label class="form-label" for="form2Example1">Email address</label>
+              <input type="email" name="email" id="form2Example1" class="form-control" placeholder="Enter Email Address!" />
+            </div>
+          
+            <!-- Password input -->
+            <div class="form-outline mb-4">
+                <label class="form-label" for="form2Example2">Password</label>
+              <input type="password" name="password" id="form2Example2" class="form-control" placeholder="Enter password" />
+            </div>
+          
+            
+            <div style="width:100%;">
+
+                <button type="submit" class="btn btn-primary btn mb-4"  style="width:100%;background-color:rgb(230, 15, 26);">Login</button>
+            </div>
+          
+            <!-- Register buttons -->
+            <div class="text-center">
+              <p>Not a member? <a href="/auth/register">Register</a></p>
+              
+            </div>
+          </form>
+    </div>
+</div>
 
 {% endblock content %}
