@@ -1,38 +1,146 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+  .tab-buttons {
+      overflow: hidden;
+      border-radius: 15px; /* Rounded corners */
+      background-color: #f1f1f1; /* Background color */
+  }
+
+  .tab-btn {
+      background-color: #f1f1f1; /* Background color */
+      float: left;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 10px 20px; /* Padding */
+      margin-right: 5px; /* Spacing between buttons */
+      transition: 0.3s; /* Smooth transition */
+      border-radius: 15px 15px 0 0; /* Rounded corners */
+  }
+
+  .tab-btn:hover {
+      background-color: #ddd; /* Darker background color on hover */
+  }
+
+  .tab-btn.active {
+      background-color: #ccc; /* Active tab background color */
+      color: #333; /* Text color for active tab */
+      border-bottom: 2px solid #333; /* Bottom border for active tab */
+  }
+</style>
 
 <div class="container">
     <div class="row py-4">
-        <div class=" mx-auto">
-            <div class="card ">
-                <div class="card-header" style="font-size:30px;">
-                    Transactions History
+        <div class="mx-auto">
+            <div class="card p-4">
+                <div class="">
+                    <div class="d-flex justify-content-between">
+                        <p style="font-size:30px;">
+                            Transactions History
+                        </p>
+                        <div>
+                          <div class="tab-buttons">
+                            <button class="tab-btn active" onclick="openTab(event, 'sent')">Debit</button>
+                            <button class="tab-btn" onclick="openTab(event, 'received')">Credit</button>
+                        </div>
+                        </div>
+                    </div>
                 </div>
 
-                <table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Transaction Type</th>
-                        <th scope="col">Amount</th>
-                        <th scope="col">Currency</th>
-                        <th scope="col">Conversion Rate</th>
-                        <th scope="col">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <th scope="row">1</th>
-                        <td>Credit</td>
-                        <td>30</td>
-                        <td>GBP</td>
-                        <td style="color:green;">SUCCESS</td>
-                      </tr>
-                      
-                    </tbody>
-                  </table>
+                <!-- Tab content for Sent Transactions -->
+                <div id="sent" class="tab-content active">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                
+                                <th scope="col">Receiver Account</th>
+                                <th scope="col">Transaction Type</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Currency</th>
+                                <th scope="col">Conversion Rate</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          {% for sent in all_sending %}
+                          <tr>
+                              
+                              <td>{{sent.Reciver.email}}</td>
+                              <td>Debit</td>
+                              <td>{{sent.amount}}</td>
+                              <td>{{sent.currency}}</td>
+                              <td>{{sent.rate}}</td>
+                              <td style="color: {% if sent.status == 'Pending' %}red{% elif sent.status == 'Success' %}green{% endif %};">
+                                  {{sent.status}}
+                              </td>
+                          </tr>
+
+                          {% endfor %}
+                            <!-- Add more rows as needed -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Tab content for Received Transactions -->
+                <div id="received" class="tab-content" style="display: none;">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                
+                                <th scope="col">Sender Account</th>
+                                <th scope="col">Transaction Type</th>
+                                <th scope="col">Amount</th>
+                                <th scope="col">Currency</th>
+                                <th scope="col">Conversion Rate</th>
+                                <th scope="col">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          {% for receive in all_receiving %}
+                            <tr>
+                                
+                                <td>{{receive.Sender.email}}</td>
+                                <td>Credit</td>
+                                <td>{{receive.amount}}</td>
+                                <td>{{receive.currency}}</td>
+                                <td>{{receive.rate}}</td>
+                                <td style="color: {% if sent.status == 'Pending' %}red{% elif sent.status == 'Success' %}green{% endif %};">
+                                    {{receive.status}}
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+                            <!-- Add more rows as needed -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function openTab(evt, tabName) {
+        var i, tabcontent, tabbuttons;
+
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        tabbuttons = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tabbuttons.length; i++) {
+            tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+        }
+
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    // Show the first tab by default
+    document.getElementById("sent").style.display = "block";
+    document.getElementsByClassName("tab-btn")[0].className += " active";
+</script>
+
 {% endblock content %}
