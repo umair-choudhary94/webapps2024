@@ -6,10 +6,36 @@
         padding:30px 20px;
         
     }
+    .tab-buttons {
+        overflow: hidden;
+        border-radius: 15px; /* Rounded corners */
+    }
+    
+    .tab-btn {
+        background-color: #f1f1f1; /* Background color */
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 10px 20px; /* Padding */
+        margin-right: 5px; /* Spacing between buttons */
+        transition: 0.3s; /* Smooth transition */
+        border-radius: 15px 15px 0 0; /* Rounded corners */
+    }
+    
+    .tab-btn:hover {
+        background-color: #ddd; /* Darker background color on hover */
+    }
+    
+    .tab-btn.active {
+        background-color: #ccc; /* Active tab background color */
+        color: #333; /* Text color for active tab */
+    }
+    
 </style>
 <div class="container py-4">
     <div class="row">
-        <div class="col-7 mx-auto">
+        <div class="col-6">
             <div class="card p-4">
         
                 <div class="d-flex flex-row justify-content-between">
@@ -20,7 +46,7 @@
                 </div>
                 <div class="price-section ">
                     <p style='font-size:55px;font-weight:bold;'>
-                        $1000
+                        {{data.currency}} {{data.amount}}
                     </p>
                     <p class='lead'>
                         Available
@@ -28,39 +54,152 @@
                 </div>
                 <hr>
                 <div>
-                    <form>
+                    <form action="/request_money/" method="post">{% csrf_token %}
                         <div class="row">
                           <div class="col-8">
-                            <input type="text" class="form-control" placeholder="Enter Amount Here">
+                            <input type="text" class="form-control" placeholder="Enter Amount Here" name="amount">
                           </div>
                           <div class="col">
-                            <select class="form-control">
-                                <option>$ USD</option>
-                              </select>
+                            <select id="currencySelect" class="form-control" name="currency">
+                              <option>Select Currency</option>
+                              <option value="GBP">GBP</option>
+                              <option value="USD">USD</option>
+                              <option value="EUR">EUR</option>
+                            </select>
                           </div>
                           
                         </div>
 
-                        <input type="text" placeholder="Account Number" class="form-control mt-4" >
-                      </form>
+                        <input type="text" placeholder="Account Email" class="form-control mt-4" name="email">
+                      
 
                 </div>
-                <hr>
+                
+                
                 <div>
-                    <p class="text-center">Conversion Rate 1$ = 275 Pkr</p>
-                </div>
-                <div>
-                    <button style='background-color:rgb(230, 15, 26);font-weight:bold;' class='text-white px-3 py-2 mt-4 text-sm rounded-pill border-0'>
+                    <button type="submit" style='background-color:rgb(230, 15, 26);font-weight:bold;' class='text-white px-3 py-2 mt-4 text-sm rounded-pill border-0'>
                         Request Now
                     </button>
                 </div>
+            </form>
             </div>
 
 
             
         </div>
             
+        <div class="col-6">
+            <div class="card p-4">
+                <!-- Tab buttons -->
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="openTab(event, 'requestedFrom')">Requested From You</button>
+                    <button class="tab-btn" onclick="openTab(event, 'requestedTo')">Requested By You</button>
+                </div>
+                
+        
+                <!-- Tab content for Requested From You -->
+                <div id="requestedFrom" class="tab-content active">
+                    {% comment %} <h5>Requested From You</h5> {% endcomment %}
+                    <div class="mt-4">
+                        {% if requests %}
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Currency</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                {% for request in requests %}
+                                <tr>
+                                    <td>{{ request.From.email }}</td>
+                                    <td>{{ request.amount }}</td>
+                                    <td>{{ request.currency }}</td>
+                                    <td style="color:green;"><a href="/permission/{{ request.id }}/">
+                                            Approve</a></td>
+                                </tr>
+                                {% endfor %}
+                               
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <span>Nothing to Approve</span>
+                        {% endif %}
+                    </div>
+                </div>
+        
+                <!-- Tab content for Requested To You -->
+                <div id="requestedTo" class="tab-content" style="display: none;">
+                    {% comment %} <h5>Requested To You</h5> {% endcomment %}
+                    <div class="mt-4">
+                        {% if requests_from_others %}
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Currency</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for request in requests_from_others %}
+                                <tr>
+                                    <td>{{ request.to.email }}</td>
+                                    <td>{{ request.amount }}</td>
+                                    <td>{{ request.currency }}</td>
+                                    <td style="color: {% if request.status == 'Pending' %}grey{% elif request.status == 'Success' %}green{% elif request.status == 'Cancelled' %}red{% endif %};">
+                                        {{ request.status }}
+                                    </td>
+                                    
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                        <span>No requested any money from other users.</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            function openTab(evt, tabName) {
+                // Declare all variables
+                var i, tabcontent, tabbuttons;
+        
+                // Get all elements with class="tab-content" and hide them
+                tabcontent = document.getElementsByClassName("tab-content");
+                for (i = 0; i < tabcontent.length; i++) {
+                    tabcontent[i].style.display = "none";
+                }
+        
+                // Get all elements with class="tab-btn" and remove the class "active"
+                tabbuttons = document.getElementsByClassName("tab-btn");
+                for (i = 0; i < tabbuttons.length; i++) {
+                    tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+                }
+        
+                // Show the current tab, and add an "active" class to the button that opened the tab
+                document.getElementById(tabName).style.display = "block";
+                evt.currentTarget.className += " active";
+            }
+        
+            // Show the first tab by default
+            document.getElementById("requestedFrom").style.display = "block";
+            document.getElementsByClassName("tab-btn")[0].className += " active";
+        </script>
+        
     </div>
+
+    
+        
+            
+   
    
 </div>
 {% endblock content %}
