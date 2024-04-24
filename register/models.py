@@ -18,7 +18,7 @@ class Userprofile(AbstractUser):
     email = models.EmailField(unique=True)
     user_name = models.CharField(max_length=200, unique=True)  
     currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default='GBP')  
-    
+    amount = models.FloatField(default=0)
     objects = UserManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = [] 
