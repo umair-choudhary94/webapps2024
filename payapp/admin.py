@@ -1,4 +1,4 @@
 from django.contrib import admin
 from .models import *
-admin.site.register(reqeusted_money)
+admin.site.register((reqeusted_money,Transaction_History))
     

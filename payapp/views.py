@@ -54,6 +54,8 @@ def send_money(request):
             converted_amount = int(amount) * rate
             receiver.amount = receiver.amount + int(converted_amount)
             receiver.save()
+            trans_history = Transaction_History(Reciver=receiver,Sender=sender,amount=amount,currency=currency,status="Success",rate=rate)
+            trans_history.save()
             
         else:
             return HttpResponse("Not enough amount to send")
@@ -106,10 +108,6 @@ def convert_currency(request,from_currency,to_currency,amount):
     if request.method == 'GET':
         print("Converting currency")
         
-        # from_currency = request.GET.get('from_currency')
-        # to_currency = request.GET.get('to_currency')
-        # amount = float(request.GET.get('amount', 0))  
-        # print(f'{from_currency} to {to_currency}')
         
         conversion_rates = {
             ('GBP', 'GBP'): 1,
@@ -137,7 +135,13 @@ def convert_currency(request,from_currency,to_currency,amount):
 def notifications(request):
     return render(request, 'payapp/notifications.html')
 def transactions(request):
-    return render(request,'payapp/transactions.html')
+    all_sending = Transaction_History.objects.filter(Sender=request.user)
+    all_receiving = Transaction_History.objects.filter(Reciver=request.user)
+    context = {
+        'all_sending' : all_sending,
+        'all_receiving' : all_receiving
+    }
+    return render(request,'payapp/transactions.html',context)
 
 def permission(request,id):
     context = {'id':id}
@@ -182,6 +186,9 @@ def approve(request,id):
         receiver.save()
         obj.status = 'Success'
         obj.save()
+        
+        trans_history = Transaction_History(Reciver=receiver,Sender=sender,amount=amount,currency=currency,status="Success",rate=rate)
+        trans_history.save()
         return HttpResponse("Success")
             
     else:
