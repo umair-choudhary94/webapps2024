@@ -89,6 +89,8 @@ def request_money(request):
         From = Userprofile.objects.get(id=request.user.id)
         obj = reqeusted_money(amount=amount,currency=currency,to=to,From=From)
         obj.save()
+        notific = Notifications(to=to,user=From,amount=amount,currency=currency,notification_type="Request")
+        notific.save()
         return HttpResponse("success")
     data = Userprofile.objects.get(id=request.user.id)
     requests = reqeusted_money.objects.filter(to=request.user.id,status='Pending')
@@ -133,7 +135,9 @@ def convert_currency(request,from_currency,to_currency,amount):
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 def notifications(request):
-    return render(request, 'payapp/notifications.html')
+    notifications = Notifications.objects.filter(to=request.user)
+    context = {'notifications':notifications}
+    return render(request, 'payapp/notifications.html',context)
 def transactions(request):
     all_sending = Transaction_History.objects.filter(Sender=request.user)
     all_receiving = Transaction_History.objects.filter(Reciver=request.user)
@@ -189,6 +193,8 @@ def approve(request,id):
         
         trans_history = Transaction_History(Reciver=receiver,Sender=sender,amount=amount,currency=currency,status="Success",rate=rate)
         trans_history.save()
+        notific = Notifications(to=receiver,user=sender,amount=amount,currency=currency,notification_type="Received")
+        notific.save()
         return HttpResponse("Success")
             
     else:
