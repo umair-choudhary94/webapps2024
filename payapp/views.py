@@ -91,7 +91,7 @@ def request_money(request):
         obj.save()
         notific = Notifications(to=to,user=From,amount=amount,currency=currency,notification_type="Request")
         notific.save()
-        return HttpResponse("success")
+        return redirect("success")
     data = Userprofile.objects.get(id=request.user.id)
     requests = reqeusted_money.objects.filter(to=request.user.id,status='Pending')
     requests_from_others = reqeusted_money.objects.filter(From=request.user.id)
@@ -138,6 +138,7 @@ def notifications(request):
     notifications = Notifications.objects.filter(to=request.user)
     context = {'notifications':notifications}
     return render(request, 'payapp/notifications.html',context)
+@login_required(login_url='/auth/login/') 
 def transactions(request):
     all_sending = Transaction_History.objects.filter(Sender=request.user)
     all_receiving = Transaction_History.objects.filter(Reciver=request.user)
@@ -146,7 +147,9 @@ def transactions(request):
         'all_receiving' : all_receiving
     }
     return render(request,'payapp/transactions.html',context)
-
+def success(request):
+    return render(request,'payapp/success.html')
+    
 def permission(request,id):
     context = {'id':id}
     return render(request, 'payapp/request_permission.html',context)
@@ -195,7 +198,7 @@ def approve(request,id):
         trans_history.save()
         notific = Notifications(to=receiver,user=sender,amount=amount,currency=currency,notification_type="Received")
         notific.save()
-        return HttpResponse("Success")
+        return redirect('success')
             
     else:
         return HttpResponse("Not enough amount to send")

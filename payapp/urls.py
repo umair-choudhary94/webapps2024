@@ -11,5 +11,6 @@ urlpatterns = [
     path('approve/<int:id>/', approve,name="approve"),
     path('notifications/', notifications,name="notifications"),
     path('transactions/', transactions,name="transactions"),
+    path('success/', success,name="success"),
     path('convert/<str:from_currency>/<str:to_currency>/<int:amount>/', convert_currency, ),
 ]
