@@ -31,25 +31,16 @@ def send_money(request):
             ('EUR', 'GBP'): 0.85,
             ('EUR', 'USD'): 1.16,
         }
-
-        
         receiver = Userprofile.objects.get(email=email)
         sender = Userprofile.objects.get(id=request.user.id)
-        
-        
         receiver_currency = receiver.currency
         sender_currency = sender.currency
         rate_for_sender = conversion_rates[(currency, sender_currency)]
         sender_amount = int(amount) * rate_for_sender
         print(f"sender amount is {sender_amount},Rate for sender is {rate_for_sender}")
-        
         if sender.amount >= sender_amount :
-            # deductin money from sender account 
             sender.amount = sender.amount - int(sender_amount)
             sender.save()
-            
-            
-            
             rate = conversion_rates[(currency, receiver_currency)]
             converted_amount = int(amount) * rate
             receiver.amount = receiver.amount + int(converted_amount)
@@ -59,17 +50,6 @@ def send_money(request):
             
         else:
             return HttpResponse("Not enough amount to send")
-        
-        # from_currency = sender.currency
-        # if (from_currency, to_currency) not in conversion_rates:
-        #     return JsonResponse({'error': f"Conversion rate not available for {from_currency} to {to_currency}"}, status=400)
-
-        # rate = conversion_rates[(from_currency, to_currency)]
-        # converted_amount = amount * rate
-        # sender.amount = sender.amount - int(amount)
-        # user.amount = user.amount + int(amount)
-        # sender.save()
-        # user.save()
         return redirect('/')
     data = Userprofile.objects.get(id=request.user.id)
   
@@ -169,31 +149,22 @@ def approve(request,id):
             ('EUR', 'USD'): 1.16,
         }
 
-        
     receiver = obj.From
-    sender = obj.to
-        
-        
+    sender = obj.to      
     receiver_currency = receiver.currency
     sender_currency = sender.currency
     rate_for_sender = conversion_rates[(currency, sender_currency)]
     sender_amount = int(amount) * rate_for_sender
-    print(f"sender amount is {sender_amount},Rate for sender is {rate_for_sender}")
-        
-    if sender.amount >= sender_amount :
-            # deductin money from sender account 
+    print(f"sender amount is {sender_amount},Rate for sender is {rate_for_sender}")        
+    if sender.amount >= sender_amount : 
         sender.amount = sender.amount - int(sender_amount)
-        sender.save()
-            
-            
-            
+        sender.save()          
         rate = conversion_rates[(currency, receiver_currency)]
         converted_amount = int(amount) * rate
         receiver.amount = receiver.amount + int(converted_amount)
         receiver.save()
         obj.status = 'Success'
-        obj.save()
-        
+        obj.save()        
         trans_history = Transaction_History(Reciver=receiver,Sender=sender,amount=amount,currency=currency,status="Success",rate=rate)
         trans_history.save()
         notific = Notifications(to=receiver,user=sender,amount=amount,currency=currency,notification_type="Received")

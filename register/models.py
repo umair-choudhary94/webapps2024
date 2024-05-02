@@ -16,7 +16,7 @@ COUNTRY_CHOICES = (
 class Userprofile(AbstractUser):
     username = None
     email = models.EmailField(unique=True)
-    user_name = models.CharField(max_length=200, unique=True)  
+    user_name = models.CharField(max_length=200)  
     currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default='GBP')  
     amount = models.FloatField(default=0)
     objects = UserManager()
