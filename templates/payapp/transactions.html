@@ -59,6 +59,7 @@
                                 <th scope="col">Amount</th>
                                 <th scope="col">Currency</th>
                                 <th scope="col">Conversion Rate</th>
+                                <th scope="col">Date</th>
                                 <th scope="col">Status</th>
                             </tr>
                         </thead>
@@ -71,6 +72,7 @@
                               <td>{{sent.amount}}</td>
                               <td>{{sent.currency}}</td>
                               <td>{{sent.rate}}</td>
+                              <td>{{sent.timestamp}}</td>
                               <td style="color: {% if sent.status == 'Pending' %}red{% elif sent.status == 'Success' %}green{% endif %};">
                                   {{sent.status}}
                               </td>
@@ -93,6 +95,7 @@
                                 <th scope="col">Amount</th>
                                 <th scope="col">Currency</th>
                                 <th scope="col">Conversion Rate</th>
+                                <th scope="col">Date</th>
                                 <th scope="col">Status</th>
                             </tr>
                         </thead>
@@ -105,6 +108,7 @@
                                 <td>{{receive.amount}}</td>
                                 <td>{{receive.currency}}</td>
                                 <td>{{receive.rate}}</td>
+                                <td>{{receive.timestamp}}</td>
                                 <td style="color: {% if sent.status == 'Pending' %}red{% elif sent.status == 'Success' %}green{% endif %};">
                                     {{receive.status}}
                                 </td>
