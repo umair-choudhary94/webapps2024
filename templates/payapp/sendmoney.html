@@ -80,6 +80,7 @@
             </button>
           </div>
         </form>
+        <input type="hidden" value={{data.currency}} id="currencyaccount">
       </div>
     </div>
   </div>
@@ -95,7 +96,8 @@
       
       function calculateAmount() {
         const amountInput = document.getElementById("amountInput").value;
-        const from_currency = "USD"; 
+        
+        const from_currency = String(document.getElementById("currencyaccount").value);
         const to_currency = document.getElementById("currencySelect").value;
       
      
